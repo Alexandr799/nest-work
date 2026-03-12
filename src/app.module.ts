@@ -7,11 +7,11 @@ import { ReviewModule } from './review/review.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import mongoConfig from './config/mongo.config';
-import { AuthModule } from './auth/auth.module';
+import { UserModule } from './user/user.module';
 
 @Module({
   imports: [
-    AuthModule,
+    UserModule,
     TopPageModule,
     ProductModule,
     ReviewModule,

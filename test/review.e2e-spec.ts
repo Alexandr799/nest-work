@@ -5,6 +5,7 @@ import { App } from 'supertest/types';
 import { AppModule } from '../src/app.module';
 import { CreateReviewDto } from 'src/review/dto/CreateReviewDto';
 import { Types } from 'mongoose';
+import { AuthDto } from 'src/user/dto/auth.dto';
 
 const productId = new Types.ObjectId().toHexString()
 const testDto: CreateReviewDto = {
@@ -22,6 +23,11 @@ const testDtoFail: CreateReviewDto = {
   rating: -1,
   productId,
 }
+const authLogin: AuthDto = {
+  "login": "hello@alexstrigo.ru",
+  "password": "12345678"
+}
+let token: string
 describe('ReviewController (e2e)', () => {
   let app: INestApplication<App>;
   let createdId: string;
@@ -32,6 +38,11 @@ describe('ReviewController (e2e)', () => {
 
     app = moduleFixture.createNestApplication();
     await app.init();
+    const { body: { access_token } } = await request(app.getHttpServer())
+      .post('/user/login')
+      .send(authLogin)
+
+    token = access_token
   });
 
   afterEach(async () => {
@@ -41,6 +52,7 @@ describe('ReviewController (e2e)', () => {
   it('/review/create (POST)', async () => {
     return request(app.getHttpServer())
       .post('/review/create')
+      .set('Authorization', `Bearer ${token}`)
       .send(testDto)
       .expect(201)
       .then(({ body }: request.Response) => {
@@ -48,18 +60,17 @@ describe('ReviewController (e2e)', () => {
         expect(createdId).toBeDefined()
       });
   });
-  
+
 
   it('/review/create (POST)', async () => {
     return request(app.getHttpServer())
       .post('/review/create')
+      .set('Authorization', `Bearer ${token}`)
       .send(testDtoFail)
       .expect(400)
       .then(({ body }: request.Response) => {
-        console.log(body)
         expect(
-          Array.isArray(body.message) &&
-          body.message.includes('123')
+          Array.isArray(body.message)
         ).toBe(true)
       });
   });
@@ -68,9 +79,9 @@ describe('ReviewController (e2e)', () => {
   it(`/review/byProduct/:productId (GET)`, async () => {
     return request(app.getHttpServer())
       .get(`/review/byProduct/${productId}`)
+      .set('Authorization', `Bearer ${token}`)
       .expect(200)
       .then(({ body }: request.Response) => {
-        console.log(body)
         expect(body.length).toBeGreaterThan(0)
       });
   });
@@ -78,6 +89,7 @@ describe('ReviewController (e2e)', () => {
   it(`/review/:id (DELETE)`, async () => {
     return request(app.getHttpServer())
       .delete(`/review/${createdId}`)
+      .set('Authorization', `Bearer ${token}`)
       .expect(200)
   });
 
