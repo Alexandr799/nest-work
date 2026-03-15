@@ -10,7 +10,6 @@ export class UserController {
 
     }
 
-    @UsePipes(new ValidationPipe())
     @Post('register')
     async register(@Body() dto: AuthDto) {
         const oldUser = await this.userService.getByEmail(dto.login)

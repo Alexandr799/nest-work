@@ -1,0 +1,1 @@
+export const UNIQUE_ALIAS_PAGE = 'Алиас должен быть уникальный'

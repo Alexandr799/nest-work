@@ -15,7 +15,7 @@ describe('ReviewService', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         ReviewService,
-        { useFactory: reviewRepositoryFatory, provide: getModelToken('ReviewModel') }
+        { useFactory: reviewRepositoryFatory, provide: getModelToken('Review') }
       ],
     }).compile();
 
