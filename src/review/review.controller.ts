@@ -5,14 +5,18 @@ import { REVIEW_NOT_FOUND } from './review.cont';
 import { JwtAuthGuard } from '../guards/jwt.guard';
 import { UserEmail } from '../decorators/user-email.decorator';
 import { IdValidation } from 'src/pipes/id-validation.pipe';
+import { TelegramService } from 'src/telegram/telegram.service';
 
 @Controller('review')
 export class ReviewController {
 
-    constructor(private readonly reviewService: ReviewService) {
+    constructor(private readonly reviewService: ReviewService,
+        private readonly telegramService: TelegramService
+    ) {
 
     }
 
+    @UseGuards(JwtAuthGuard)
     @Post('create')
     async create(@Body() dto: CreateReviewDto) {
         return await this.reviewService.create(dto)
@@ -29,10 +33,15 @@ export class ReviewController {
         return 
     }
 
-    @UseGuards(JwtAuthGuard)
     @Get('byProduct/:productId')
     async getByProduct(@Param('productId', IdValidation) productId: string, @UserEmail() email:string) {
         return [email]
+    }
+
+    @UseGuards(JwtAuthGuard)
+    @Post('notify')
+    async notify(@Body() dto: CreateReviewDto) {
+        return this.telegramService.sendMessage(`${dto.name}\n Какой то текст`)
     }
 
 

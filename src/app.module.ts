@@ -9,7 +9,9 @@ import { MongooseModule } from '@nestjs/mongoose';
 import mongoConfig from './config/mongo.config';
 import { UserModule } from './user/user.module';
 import { FileModule } from './file/file.module';
-import { SitemapModule } from './sitemap/sitemap.module';
+import { TelegramModule } from './telegram/telegram.module';
+import { TELEGRAM_MODULE_OPTIONS } from './telegram/telegram.conts';
+import telegramConfig from './config/telegram.config';
 
 @Module({
   imports: [
@@ -24,8 +26,11 @@ import { SitemapModule } from './sitemap/sitemap.module';
       inject: [ConfigService],
       useFactory: mongoConfig,
     }),
+    TelegramModule.forRootAsync({
+      inject: [ConfigService],
+      useFactory: telegramConfig
+    }),
     FileModule,
-    SitemapModule,
   ],
   controllers: [AppController],
   providers: [AppService],
