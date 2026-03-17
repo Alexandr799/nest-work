@@ -1,7 +1,7 @@
 version: '3'
 services:
   nest-learn-api:
-    image: nest-learn-api:latest
+    image: ghcr.io/alexandr799/nest-work:develop
     container_name: nest-learn-api
     restart: always
     ports:

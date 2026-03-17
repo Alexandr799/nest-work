@@ -8,6 +8,8 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import mongoConfig from './config/mongo.config';
 import { UserModule } from './user/user.module';
+import { FileModule } from './file/file.module';
+import { SitemapModule } from './sitemap/sitemap.module';
 
 @Module({
   imports: [
@@ -22,6 +24,8 @@ import { UserModule } from './user/user.module';
       inject: [ConfigService],
       useFactory: mongoConfig,
     }),
+    FileModule,
+    SitemapModule,
   ],
   controllers: [AppController],
   providers: [AppService],
