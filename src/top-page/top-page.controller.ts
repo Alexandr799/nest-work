@@ -5,11 +5,13 @@ import { IdValidation } from 'src/pipes/id-validation.pipe';
 import { TopPageService } from './top-page.service';
 import { CreateTopPageDTO } from './dto/create-top-page.dto';
 import { JwtAuthGuard } from 'src/guards/jwt.guard';
+import { HhService } from 'src/hh/hh.service';
+import { Cron, CronExpression } from '@nestjs/schedule';
 
 @Controller('top-page')
 export class TopPageController {
 
-    constructor(private topPageServce: TopPageService) {
+    constructor(private topPageServce: TopPageService, private readonly HHservice: HhService) {
 
     }
     @UseGuards(JwtAuthGuard)
@@ -55,5 +57,17 @@ export class TopPageController {
     @Get('textSearch/:text')
     async textSearch(@Param('tedxt') text:string) {
         return this.topPageServce.textSearch(text)
+    }
+
+    @Cron(CronExpression.EVERY_DAY_AT_MIDNIGHT, {name: 'hh'})
+    async hh() {
+        const data = await this.topPageServce.findForHHUpdate(new Date())
+        for (let page of data) {
+            const hhData = await this.HHservice.getData(
+                page.category
+            )
+            page.hh = hhData
+            await this.topPageServce.updateById(page._id.toHexString(), page)
+        }
     }
 }

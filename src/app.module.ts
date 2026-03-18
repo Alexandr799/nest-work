@@ -11,7 +11,9 @@ import { UserModule } from './user/user.module';
 import { FileModule } from './file/file.module';
 import { TelegramModule } from './telegram/telegram.module';
 import { TELEGRAM_MODULE_OPTIONS } from './telegram/telegram.conts';
+import { HhModule } from './hh/hh.module';
 import telegramConfig from './config/telegram.config';
+import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
   imports: [
@@ -31,6 +33,8 @@ import telegramConfig from './config/telegram.config';
       useFactory: telegramConfig
     }),
     FileModule,
+    HhModule,
+    ScheduleModule.forRoot()
   ],
   controllers: [AppController],
   providers: [AppService],

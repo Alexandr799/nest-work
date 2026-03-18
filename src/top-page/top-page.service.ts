@@ -5,6 +5,7 @@ import { Model } from 'mongoose';
 import { CreateTopPageDTO } from './dto/create-top-page.dto';
 import { FindTopPageDto } from './dto/find-top-page.dto';
 import { UNIQUE_ALIAS_PAGE } from './top-page.const';
+import { addDays } from 'date-fns';
 
 @Injectable()
 export class TopPageService {
@@ -63,6 +64,24 @@ export class TopPageService {
                 $search: text,
                 $caseSensitive: false,
             }
+        }).exec()
+    }
+
+    async findForHHUpdate(date: Date) {
+        return this.topPageServce.find({
+            firstCategory: 0,
+            $or: [
+                {
+                    'hh.updatedAt': {
+                        $lt: addDays(date, -1)
+                    }
+                },
+                {
+                    'hh.updatedAt': {
+                        $exists: false
+                    }
+                },
+            ]
         }).exec()
     }
 }
